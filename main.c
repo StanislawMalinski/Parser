@@ -12,6 +12,9 @@
 //           z {1} gdy takowej listy nie podajemy
 // ./a.out 2 <plik_z_listą_funkcji_do_ignorowania> <pliki_analizowane>...
 // ./a.out 1 <pliki_analizowane>...
+// Kody wyjścia:
+// 0 - Prawidłowy kod wyjścia
+// 2 - Błąd danych wejściowych
 
 void help(char *nazwa){
 	printf("Pomoc\n\n");
@@ -28,7 +31,7 @@ int main(int argc, char **argv){
 	if (tryb != 1 && tryb != 2){
 		fprintf(stderr, "%s: Nie prawidłowy format wejściowy.\nNie wprowadzono trybu działania programu\n", argv[0]);
 		help(argv[0]);
-		return 1;
+		return 2;
 	}
 	if (tryb == 2){
 		FILE *ignoruj = argc > 2 ? fopen(argv[2], "r") : NULL;
@@ -44,6 +47,7 @@ int main(int argc, char **argv){
 		help(argv[0]);
 		return 2;
 	}
+	// Dane wczytane i zaakceptowane	
 	for( i = 2 + pocz; i < argc; i++){ // pętla iterująca po plikach argv[i]
 		
 		printf("%d", i);
