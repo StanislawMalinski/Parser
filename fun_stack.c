@@ -20,7 +20,7 @@ void put_on_fun_stack( int par_level, char *funame){
     top = New;
 }
 
-char *get_from_stack(){
+char *get_from_fun_stack(){
     char *tmp;
     Layer *temper;
     if( top->next == NULL){
