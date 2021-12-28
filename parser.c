@@ -6,6 +6,10 @@
 #include "fun_stack.h"  // stos funkcji
 
 #define MAXINDENTLENGHT 256     // maks długość identyfikatora
+#define SIZE 1
+
+int Size = SIZE;
+kontener *Kont;
 
 void
 analizatorSkladni (char *inpname)
@@ -74,4 +78,47 @@ analizatorSkladni (char *inpname)
     }
     lex = alex_nextLexem ();
   }
+}
+
+void K( void ){
+    if (Kont == NULL){
+	Kont = malloc(SIZE *sizeof *Kont);
+	Kont->size = 0;
+    }else{
+	Size = Size + SIZE;
+	Kont = realloc(Kont, Size*sizeof *Kont);
+    }
+}
+
+void store_add_def(char *funame, int line_nr, char *inpname){
+    K();
+    stat *New;
+    New = malloc(sizeof *New);
+    New->typ = 1;
+    New->nazwa = funame;
+    New->numer_lini = line_nr;
+    New->plik = inpname;
+    Kont->kont[(Kont->size)++] = *New;
+}
+
+void store_add_proto(char *funame, int line_nr, char *inpname){
+    K();
+    stat *New;
+    New = malloc(sizeof *New);
+    New->typ = 2;
+    New->nazwa = funame;
+    New->numer_lini = line_nr;
+    New->plik = inpname;
+    Kont->kont[(Kont->size)++] = *New;
+}
+
+void store_add_call(char *funame, int line_nr, char *inpname){
+    K();
+    stat *New;
+    New = malloc(sizeof *New);
+    New->typ = 3;
+    New->nazwa = funame;
+    New->numer_lini = line_nr;
+    New->plik = inpname;
+    Kont->kont[(Kont->size)++] = *New;
 }
