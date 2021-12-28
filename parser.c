@@ -17,20 +17,19 @@ kontener *Kont;
 void
 analizatorSkladni (char *inpname)
 {                               // przetwarza plik inpname
-
   FILE *in = fopen (inpname, "r");
 
   int nbra = 0;   // bilans nawiasów klamrowych {}
   int npar = 0;   // bilans nawiasów zwykłych ()
 
   alex_init4file (in);          // ustaw analizator leksykalny, aby czytał in
-
   lexem_t lex;
 
   lex = alex_nextLexem ();      // pobierz następny leksem
   while (lex != EOFILE) {
     switch (lex) {
     case IDENT:{
+	printf("-> Ident\n");
         char *iname = alex_ident ();   // zapamiętaj identyfikator i patrz co dalej
         lexem_t nlex = alex_nextLexem ();
         if (nlex == OPEPAR) {   // nawias otwierający - to zapewne funkcja
@@ -46,9 +45,11 @@ analizatorSkladni (char *inpname)
       }
       break;
     case OPEPAR:
+        printf("-> Opepar\n");
       npar++;
       break;
     case CLOPAR:{              // zamykający nawias - to może być koniec prototypu, nagłówka albo wywołania
+        printf("-> Clopar (npar = %d)\n", npar);
         if (top_of_funstack () == npar) {       // sprawdzamy, czy liczba nawiasów bilansuje się z wierzchołkiem stosu funkcji
                                                 // jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
                                                 // za identyfikatorem znajdującym się na wierzchołku stosu
@@ -64,12 +65,15 @@ analizatorSkladni (char *inpname)
       }
       break;
     case OPEBRA:
+        printf("-> Opebra\n");
       nbra++;
       break;
     case CLOBRA:
+        printf("-> Clobra (nbra = %d)\n", nbra);
       nbra--;
       break;
     case ERROR:{
+        printf("-> ERROR\n");
         fprintf (stderr, "\nBUUUUUUUUUUUUUUUUUUUUUU!\n"
                  "W pliku %s (linia %d) są błędy składni.\n"
                  "Kończę!\n\n", inpname, alex_getLN ());
@@ -159,15 +163,17 @@ char *typ(int a){
 	return "ERROR, nieznany typ";
 }
 
-void wypisywacz(kontener *COS){
+int wypisywacz(kontener *COS){
     char *tmp_nazwa;
     int tmp_typ;
     int petl = COS->size;
-    if (petl < 1);
+    if (petl < 1){
 	fprintf(stderr, "'wypisywacz': kontener pusty.\n");
-	return EXIT_FAILURE;
+	return 1;
+    }
     qsort(COS, petl, sizeof(stat), comp);
-    tmp_nazwa = (COS->kont[0])->nazwa;
-    tmp_typ = (COS->kont[0])->typ;
+    tmp_nazwa = (COS->kont[0]).nazwa;
+    tmp_typ = (COS->kont[0]).typ;
     //Dalszy kod
+    return 0;
 }
