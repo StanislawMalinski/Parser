@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h> // exit - ale exit trzeba kiedyś usunąć i nie będzie to potrzebne
 #include "alex.h"       // analizator leksykalny
@@ -7,6 +8,8 @@
 
 #define MAXINDENTLENGHT 256     // maks długość identyfikatora
 #define SIZE 1
+
+#define MAX
 
 int Size = SIZE;
 kontener *Kont;
@@ -121,4 +124,50 @@ void store_add_call(char *funame, int line_nr, char *inpname){
     New->numer_lini = line_nr;
     New->plik = inpname;
     Kont->kont[(Kont->size)++] = *New;
+}
+
+int comp(const void *aa, const void *bb){
+    int c;
+    stat a = Kont->kont[*(int*)aa]; 
+    stat b = Kont->kont[*(int*)bb];
+    c = strcmp(a.nazwa,b.nazwa);
+    if (c != 0)				//Porównanie po nazwie funkcji
+	return c;
+    if (a.typ > b.typ)			//Porównanie po typie 
+	return 1;
+    else if (a.typ < b.typ)
+	return -1;
+    c = strcmp(a.plik,b.plik);
+    if (c != 0)				//Porównanie po nazwie pliku
+	return c;
+    if (a.numer_lini > b.numer_lini)	//Porównianie po numerze lini
+        return 1;
+    else if (a.numer_lini < b.numer_lini)
+        return -1;
+    return 0;
+	
+}
+
+char *typ(int a){
+    if (a == 1)
+	return "definicja";
+    else if (a == 2)
+	return "prototyp";
+    else if (a == 3)
+	return "wywołanie";
+    else
+	return "ERROR, nieznany typ";
+}
+
+void wypisywacz(kontener *COS){
+    char *tmp_nazwa;
+    int tmp_typ;
+    int petl = COS->size;
+    if (petl < 1);
+	fprintf(stderr, "'wypisywacz': kontener pusty.\n");
+	return EXIT_FAILURE;
+    qsort(COS, petl, sizeof(stat), comp);
+    tmp_nazwa = (COS->kont[0])->nazwa;
+    tmp_typ = (COS->kont[0])->typ;
+    //Dalszy kod
 }
