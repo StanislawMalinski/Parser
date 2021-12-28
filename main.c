@@ -49,8 +49,7 @@ int main(int argc, char **argv){
 	}
 	// Dane wczytane i zaakceptowane	
 	for( i = 2 + pocz; i < argc; i++){ // pętla iterująca po plikach argv[i]
-		
-		printf("%d", i);
+		analizatorSkladni(argv[i]);
 	}
 	return 0;
 }

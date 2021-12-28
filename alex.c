@@ -22,8 +22,9 @@ int isKeyword(char *word){  //Przetestuj
 }
 
 lexem_t alex_nextLexem( void ) {
-  int c;
+  char c;
   while( (c= fgetc(ci)) != EOF ) {
+printf("%c",c);
     if( isspace( c ) )
         continue;
     else if( c == '\n' )
