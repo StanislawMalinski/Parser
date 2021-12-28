@@ -24,7 +24,7 @@ char *get_from_fun_stack(){
     char *tmp;
     Layer *temper;
     if( top->next == NULL){
-	fprintf(stderr, "char *get_from_stacks: Stos jest pusty!\n");
+	fprintf(stderr, "char *get_from_fun_stack: Stos jest pusty!\n");
 	return NULL;
     }else{
 	tmp = top->funame;
