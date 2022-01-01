@@ -27,7 +27,6 @@ analizatorSkladni (char *inpname)
   while (lex != EOFILE) {
     switch (lex) {
     case IDENT:{
-	printf("-> Ident\n");
         char *iname = alex_ident ();   // zapamiętaj identyfikator i patrz co dalej
         lexem_t nlex = alex_nextLexem ();
         if (nlex == OPEPAR) {   // nawias otwierający - to zapewne funkcja
@@ -43,31 +42,28 @@ analizatorSkladni (char *inpname)
       }
       break;
     case OPEPAR:
-        printf("-> Opepar\n");
       npar++;
       break;
-    case CLOPAR:{              // zamykający nawias - to może być koniec prototypu, nagłówka albo wywołania
-        printf("-> Clopar (npar = %d)\n", npar);
+    case CLOPAR:{	// zamykający nawias - to może być koniec prototypu, nagłówka albo wywołania
+    	int ln_nr = alex_getLN();
         if (top_of_funstack () == npar) {       // sprawdzamy, czy liczba nawiasów bilansuje się z wierzchołkiem stosu funkcji
                                                 // jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
                                                 // za identyfikatorem znajdującym się na wierzchołku stosu
           lexem_t nlex = alex_nextLexem ();     // bierzemy nast leksem
           if (nlex == OPEBRA)   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
-            store_add_def (get_from_fun_stack (), alex_getLN (), inpname);
+            store_add_def (get_from_fun_stack (), ln_nr, inpname);
           else if (nbra == 0)   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
-            store_add_proto (get_from_fun_stack (), alex_getLN (), inpname);
+            store_add_proto (get_from_fun_stack (), ln_nr, inpname);
           else                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
-            store_add_call (get_from_fun_stack (), alex_getLN (), inpname);
+            store_add_call (get_from_fun_stack (), ln_nr, inpname);
         }
         npar--;
       }
       break;
     case OPEBRA:
-        printf("-> Opebra\n");
       nbra++;
       break;
     case CLOBRA:
-        printf("-> Clobra (nbra = %d)\n", nbra);
       nbra--;
       break;
     case ERROR:{
