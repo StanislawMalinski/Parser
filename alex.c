@@ -15,8 +15,8 @@ void alex_init4file( FILE *in ) {
 int isKeyword(char *word){  //Przetestuj
     char *keywords[32] = {"auto", "double", "int", "struct","break", "else", "long", "switch", "case", "enum", "register", "typedef", "char", "extern", "return", "union", "continue", "for", "signed", "void", "do", "if", "static", "while", "default", "goto", "sizeof", "volatile", "const", "float", "short", "unsigned"};
     for (int i = 0; i < 32; i++){
-	if( strcmp(word, keywords[i]))
-	    return 1;
+	if(strcmp(word, keywords[i]) == 0)
+		return 1;
     }
     return 0;
 }
@@ -24,7 +24,7 @@ int isKeyword(char *word){  //Przetestuj
 lexem_t alex_nextLexem( void ) {
   char c;
   while( (c= fgetc(ci)) != EOF ) {
-printf("%c",c);
+//printf("%c",c);
     if( isspace( c ) )
         continue;
     else if( c == '\n' )
@@ -43,6 +43,7 @@ printf("%c",c);
         while( isalnum( c = fgetc(ci) ) )
             ident[i++] = c;
         ident[i] = '\0';
+	ungetc(c, ci);
         return isKeyword(ident) ? OTHER : IDENT;
     }else if( c == '"' ) {
       /* Uwaga: tu trzeba jeszcze poprawic obsluge nowej linii w trakcie napisu
