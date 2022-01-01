@@ -9,8 +9,6 @@
 #define MAXINDENTLENGHT 256     // maks długość identyfikatora
 #define SIZE 1
 
-#define MAX
-
 int Size = SIZE;
 kontener *Kont;
 
@@ -183,7 +181,7 @@ int wypisywacz(kontener *COS){
 	tmp_numer_lini = temp.numer_lini;
 	if (strcmp(temp.nazwa,tmp_nazwa) != 0){
              tmp_nazwa = temp.nazwa;
-	     printf("Funkcja :'%s'\n",tmp_nazwa);
+	     printf("Funkcja '%s'\n",tmp_nazwa);
 	     tmp_typ = temp.typ;
 	     printf("\t%s:\n", typ(tmp_typ));
 	     tmp_plik = temp.plik;

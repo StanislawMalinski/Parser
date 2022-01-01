@@ -18,7 +18,7 @@ int main(int argc, char **argv){
     	fprintf(stderr, "Błąd funkcji 'top_of_funstack'.\n");
     	return 1;
     }
-
+    
     printf("Test 3: funkcja 'get_from_fun_stack' - zdjęcie pary ze stosu i sprawdzenie zdjętego napisu.\n");
     if (strcmp("Test_str_1", get_from_fun_stack()) == 0){
         printf("3/%d Test: funkcja 'get_from_fun_stack' działa prawidłowo.\n", n);
