@@ -154,19 +154,20 @@ int comp(const void *aa, const void *bb){
 
 char *typ(int a){
     if (a == 1)
-	return "definicja";
+	return "Definicja";
     else if (a == 2)
-	return "prototyp";
+	return "Prototyp";
     else if (a == 3)
-	return "wywołanie";
+	return "Wywołanie";
     else
 	return "ERROR, nieznany typ";
 }
 
 int wypisywacz(kontener *COS){
-    char *tmp_nazwa;
-    int tmp_typ;
+    char *tmp_nazwa, *tmp_plik;
+    int tmp_typ, tmp_numer_lini;
     int petl = COS->size;
+    stat temp;
     if (petl < 1){
 	fprintf(stderr, "'wypisywacz': kontener pusty.\n");
 	return 1;
@@ -174,6 +175,30 @@ int wypisywacz(kontener *COS){
     qsort(COS, petl, sizeof(stat), comp);
     tmp_nazwa = (COS->kont[0]).nazwa;
     tmp_typ = (COS->kont[0]).typ;
-    //Dalszy kod
+    tmp_plik = (COS->kont[0]).plik;
+    tmp_numer_lini = (COS->kont[0]).numer_lini;
+    printf("Funkcja :'%s'\n\t%s:\n %s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
+    for (int i = 1; i < petl; i++){
+	temp = COS->kont[i];
+	tmp_numer_lini = temp.numer_lini;
+	if (strcmp(temp.nazwa,tmp_nazwa) != 0){
+             tmp_nazwa = temp.nazwa;
+	     printf("Funkcja :'%s'\n",tmp_nazwa);
+	     tmp_typ = temp.typ;
+	     printf("\t%s:\n", typ(tmp_typ));
+	     tmp_plik = temp.plik;
+	     printf("%s w linijce %d\n", tmp_plik, tmp_numer_lini);
+	}
+	if (temp.typ != tmp_typ){
+             tmp_typ = temp.typ;
+             printf("\t%s:\n", typ(tmp_typ));
+             tmp_plik = temp.plik;
+             printf("%s w linijce %d\n", tmp_plik, tmp_numer_lini);
+	}	     
+	if (strcmp(temp.plik, tmp_plik) != 0){
+             tmp_plik = temp.plik;
+             printf("%s w linijce %d\n", tmp_plik, tmp_numer_lini);
+	}
+    }
     return 0;
 }
