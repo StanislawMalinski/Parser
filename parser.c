@@ -97,15 +97,17 @@ printf("call\n");
     }
     lex = alex_nextLexem ();
   }
+  wypisywacz(Kont);
 }
 
 void K( void ){
     if (Kont == NULL){
 	Kont = malloc(SIZE *sizeof *Kont);
+	Kont->kont = malloc(SIZE * sizeof *(Kont->kont));
 	Kont->size = 0;
     }else{
 	Size = Size + SIZE;
-	Kont = realloc(Kont, Size*sizeof *Kont);
+	Kont->kont = realloc(Kont->kont, Size*sizeof *(Kont->kont));
     }
 }
 
@@ -184,7 +186,7 @@ int wypisywacz(kontener *COS){
 	fprintf(stderr, "'wypisywacz': kontener pusty.\n");
 	return 1;
     }
-    qsort(COS, petl, sizeof(stat), comp);
+    qsort(COS->kont, petl, sizeof(stat), comp);
     tmp_nazwa = (COS->kont[0]).nazwa;
     tmp_typ = (COS->kont[0]).typ;
     tmp_plik = (COS->kont[0]).plik;

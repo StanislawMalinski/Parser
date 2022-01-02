@@ -50,7 +50,7 @@ lexem_t alex_nextLexem( void ) {
          i \\ w napisie 
       */
         int cp = c;
-        while( (c= fgetc(ci)) != EOF && c != '"' && cp != '\\' ) {
+        while( (c= fgetc(ci)) != EOF && c != '"' && cp == '\\' ) {
             cp = c;
         }
         return c==EOF ? EOFILE : OTHER; 
