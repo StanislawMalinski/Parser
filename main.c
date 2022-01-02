@@ -51,6 +51,7 @@ int main(int argc, char **argv){
 	for( i = 2 + pocz; i < argc; i++){ // pętla iterująca po plikach argv[i]
 		analizatorSkladni(argv[i]);
 	}
-	//wypisywacz(Kont);
+//	printf("'Hej' = %d, 'for' = %d, 'if' = %d, 'struct' = %d, 'return' = %d\n", isKeyword("Hej"), isKeyword("for"), isKeyword("if"), isKeyword("struct"), isKeyword("return"));
+	wypisywacz();
 	return 0;
 }

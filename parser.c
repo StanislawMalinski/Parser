@@ -7,9 +7,8 @@
 #include "fun_stack.h"  // stos funkcji
 
 #define MAXINDENTLENGHT 256     // maks długość identyfikatora
-#define SIZE 1
 
-int Size = SIZE;
+int Size = 1;
 kontener *Kont;
 
 void
@@ -31,7 +30,7 @@ analizatorSkladni (char *inpname)
         char *iname = alex_ident ();             // zapamiętaj identyfikator i patrz co dalej
         lexem_t nlex = alex_nextLexem ();
         if (nlex == OPEPAR) {                    // nawias otwierający - to zapewne funkcja
-            printf("-> Opepar\n");
+            printf("-> Opepar(po Ident)\n");
             npar++;
 	  printf("odstawiam npar=\"%d\" oraz iname=\"%s\"\n", npar, iname);  
           put_on_fun_stack (npar, iname);      // odłóż na stos funkcji
@@ -80,9 +79,6 @@ printf("call\n");
       printf("-> Clobra\n");
       nbra--;
       break;
-    case OTHER:
-	printf("-> Other\n");
-      break;
     case ERROR:{
       printf("-> Error\n");
         printf("-> ERROR\n");
@@ -101,11 +97,11 @@ printf("call\n");
 
 void K( void ){
     if (Kont == NULL){
-	Kont = malloc(SIZE *sizeof *Kont);
+	Kont = malloc(Size *sizeof *Kont);
 	Kont->size = 0;
     }else{
-	Size = Size + SIZE;
-	Kont = realloc(Kont, Size*sizeof *Kont);
+	Size = Size + 1;
+	Kont = realloc(Kont, Size * sizeof *Kont);
     }
 }
 
@@ -118,6 +114,7 @@ void store_add_def(char *funame, int line_nr, char *inpname){
     New->numer_lini = line_nr;
     New->plik = inpname;
     Kont->kont[(Kont->size)++] = *New;
+    printf("def = %d\n", Kont->size);
 }
 
 void store_add_proto(char *funame, int line_nr, char *inpname){
@@ -129,6 +126,7 @@ void store_add_proto(char *funame, int line_nr, char *inpname){
     New->numer_lini = line_nr;
     New->plik = inpname;
     Kont->kont[(Kont->size)++] = *New;
+    printf("proto = %d\n", Kont->size);
 }
 
 void store_add_call(char *funame, int line_nr, char *inpname){
@@ -140,6 +138,7 @@ void store_add_call(char *funame, int line_nr, char *inpname){
     New->numer_lini = line_nr;
     New->plik = inpname;
     Kont->kont[(Kont->size)++] = *New;
+    printf("call = %d\n", Kont->size);
 }
 
 int comp(const void *aa, const void *bb){
@@ -175,23 +174,27 @@ char *typ(int a){
 	return "ERROR, nieznany typ";
 }
 
-int wypisywacz(kontener *COS){
+int wypisywacz( void ){
+printf("O tu?\n");
     char *tmp_nazwa, *tmp_plik;
     int tmp_typ, tmp_numer_lini;
-    int petl = COS->size;
+printf("Pewnie tu?\n");
+    int petl = Kont->size;
+printf("Kurde\n");
     stat temp;
+printf("Tu?\n");
     if (petl < 1){
 	fprintf(stderr, "'wypisywacz': kontener pusty.\n");
 	return 1;
     }
-    qsort(COS, petl, sizeof(stat), comp);
-    tmp_nazwa = (COS->kont[0]).nazwa;
-    tmp_typ = (COS->kont[0]).typ;
-    tmp_plik = (COS->kont[0]).plik;
-    tmp_numer_lini = (COS->kont[0]).numer_lini;
+    qsort(Kont, petl, sizeof(stat), comp);
+    tmp_nazwa = (Kont->kont[0]).nazwa;
+    tmp_typ = (Kont->kont[0]).typ;
+    tmp_plik = (Kont->kont[0]).plik;
+    tmp_numer_lini = (Kont->kont[0]).numer_lini;
     printf("Funkcja :'%s'\n\t%s:\n %s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
     for (int i = 1; i < petl; i++){
-	temp = COS->kont[i];
+	temp = Kont->kont[i];
 	tmp_numer_lini = temp.numer_lini;
 	if (strcmp(temp.nazwa,tmp_nazwa) != 0){
              tmp_nazwa = temp.nazwa;

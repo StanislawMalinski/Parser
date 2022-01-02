@@ -21,6 +21,6 @@ void store_add_proto(char *funame, int line_nr, char *inpname);
 
 void store_add_call(char *funame, int line_nr, char *inpname);
 
-int wypisywacz(kontener *konterner);
+int wypisywacz( void );
 
 #endif

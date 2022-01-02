@@ -5,7 +5,7 @@
    Drugi komentarz
 */
 
-char *globaly_str = "Bardzo wazny \n globalny str \\ pod żadnym pozorem nie usuwac.\n";
+char *globaly_str = "Bardzo wazny \n globalny str \\ pod zadnym pozorem nie usuwac.\n";
 
 int funkcja1(int a, int b);
 double funkcja2(double a, double b);

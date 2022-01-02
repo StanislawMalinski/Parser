@@ -43,14 +43,14 @@ lexem_t alex_nextLexem( void ) {
             ident[i++] = c;
         ident[i] = '\0';
 	ungetc(c, ci);
-	printf("%s\n",ident);
+	printf("%s\n", ident);
         return isKeyword(ident) ? OTHER : IDENT;
     }else if( c == '"' ) {
       /* Uwaga: tu trzeba jeszcze poprawic obsluge nowej linii w trakcie napisu
          i \\ w napisie 
       */
         int cp = c;
-        while( (c= fgetc(ci)) != EOF && c != '"' && cp != '\\' ) {
+        while( (c = fgetc(ci)) != EOF && c != '"' && cp != '\\' ) {
             cp = c;
         }
         return c==EOF ? EOFILE : OTHER; 
