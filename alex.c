@@ -39,24 +39,44 @@ lexem_t alex_nextLexem( void ) {
     else if( isalpha( c ) ) {
         int i= 1;
         ident[0] = c;
-        while( isalnum( c = fgetc(ci) ) )
+        while( isalnum( c = fgetc(ci) ) != 0 )
             ident[i++] = c;
         ident[i] = '\0';
 	ungetc(c, ci);
+	printf("%s\n",ident);
         return isKeyword(ident) ? OTHER : IDENT;
     }else if( c == '"' ) {
       /* Uwaga: tu trzeba jeszcze poprawic obsluge nowej linii w trakcie napisu
          i \\ w napisie 
       */
         int cp = c;
-        while( (c= fgetc(ci)) != EOF && c != '"' && cp == '\\' ) {
+        while( (c= fgetc(ci)) != EOF && c != '"' && cp != '\\' ) {
             cp = c;
         }
         return c==EOF ? EOFILE : OTHER; 
-    }else if( c == '/' ) {
-      /* moze byc komentarz */
+    }else if( c == '/' ) { 						// obsułga komentarzy
+	c = fgetc(ci);
+
+	if (c == '*'){    						// długi komentarz
+	    int znaleziono_komentarz = 0;
+	    while(znaleziono_komentarz == 0){
+		while (fgetc(ci) != '*'){
+		    ;
+		}
+		c = fgetc(ci);
+		if(c == '/'){
+		    znaleziono_komentarz = 1;
+		}else if ( c == '*'){
+		    ;
+		}
+	    }
+	} else if (c == '/'){ 						// komentarz kończy się w tej linije
+	    while(fgetc(ci) != '\n'){
+		;
+	    }
+	}
     } if( isdigit( c ) || c == '.' ) {
-      /* liczba */
+      		/* liczba */
     } else {
         return OTHER;
     }

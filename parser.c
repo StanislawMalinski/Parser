@@ -27,13 +27,16 @@ analizatorSkladni (char *inpname)
   while (lex != EOFILE) {
     switch (lex) {
     case IDENT:{
-        char *iname = alex_ident ();   // zapamiętaj identyfikator i patrz co dalej
+        printf("-> Ident\n");
+        char *iname = alex_ident ();             // zapamiętaj identyfikator i patrz co dalej
         lexem_t nlex = alex_nextLexem ();
-        if (nlex == OPEPAR) {   // nawias otwierający - to zapewne funkcja
-          npar++;
-          put_on_fun_stack (npar, iname);       // odłóż na stos funkcji
-                                                // stos f. jest niezbędny, aby poprawnie obsłużyć sytuacje typu
-                                                // f1( 5, f2( a ), f3( b ) )
+        if (nlex == OPEPAR) {                    // nawias otwierający - to zapewne funkcja
+            printf("-> Opepar\n");
+            npar++;
+	  printf("odstawiam npar=\"%d\" oraz iname=\"%s\"\n", npar, iname);  
+          put_on_fun_stack (npar, iname);      // odłóż na stos funkcji
+                                                 // stos f. jest niezbędny, aby poprawnie obsłużyć sytuacje typu
+                                                 // f1( 5, f2( a ), f3( b ) )
         }
         else {                  // nie nawias, czyli nie funkcja
           lex = nlex;
@@ -41,32 +44,47 @@ analizatorSkladni (char *inpname)
         }
       }
       break;
-    case OPEPAR:
+    case OPEPAR:{
+      printf("-> Opepar\n");
       npar++;
-      break;
+    }
+    break;
     case CLOPAR:{	// zamykający nawias - to może być koniec prototypu, nagłówka albo wywołania
-    	int ln_nr = alex_getLN();
-        if (top_of_funstack () == npar) {       // sprawdzamy, czy liczba nawiasów bilansuje się z wierzchołkiem stosu funkcji
+      printf("-> Clopar (npar = %d)\n", npar);
+      int ln_nr = alex_getLN();
+      if (top_of_funstack () == npar) {       // sprawdzamy, czy liczba nawiasów bilansuje się z wierzchołkiem stosu funkcji
                                                 // jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
                                                 // za identyfikatorem znajdującym się na wierzchołku stosu
           lexem_t nlex = alex_nextLexem ();     // bierzemy nast leksem
-          if (nlex == OPEBRA)   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
-            store_add_def (get_from_fun_stack (), ln_nr, inpname);
-          else if (nbra == 0)   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
-            store_add_proto (get_from_fun_stack (), ln_nr, inpname);
-          else                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
-            store_add_call (get_from_fun_stack (), ln_nr, inpname);
-        }
-        npar--;
+	  printf("Tu jeszcze działa\n");
+       //   printf("odstawiam get_from_fun_stack=\"%s\", ln_nr=\"%d\" oraz inpname=\"%s\"\n", get_from_fun_stack(), ln_nr, inpname);
+          if (nlex == OPEBRA){   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
+printf("def\n");
+              store_add_def (get_from_fun_stack (), ln_nr, inpname);
+          }else if (nbra == 0){   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
+printf("proto\n");
+              store_add_proto (get_from_fun_stack (), ln_nr, inpname);
+          }else{                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
+printf("call\n");
+              store_add_call (get_from_fun_stack (), ln_nr, inpname);
+	  }
       }
-      break;
+      npar--;
+    }
+    break;
     case OPEBRA:
+      printf("-> Opebra\n");
       nbra++;
       break;
     case CLOBRA:
+      printf("-> Clobra\n");
       nbra--;
       break;
+    case OTHER:
+	printf("-> Other\n");
+      break;
     case ERROR:{
+      printf("-> Error\n");
         printf("-> ERROR\n");
         fprintf (stderr, "\nBUUUUUUUUUUUUUUUUUUUUUU!\n"
                  "W pliku %s (linia %d) są błędy składni.\n"

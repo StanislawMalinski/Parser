@@ -49,11 +49,8 @@ int main(int argc, char **argv){
 	}
 	// Dane wczytane i zaakceptowane	
 	for( i = 2 + pocz; i < argc; i++){ // pętla iterująca po plikach argv[i]
-<<<<<<< HEAD
-=======
-		
->>>>>>> c08b4c03b2bee992c20482a75e31e9f4b49fa83f
 		analizatorSkladni(argv[i]);
 	}
+	//wypisywacz(Kont);
 	return 0;
 }
