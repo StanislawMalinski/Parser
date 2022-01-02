@@ -7,6 +7,7 @@
 #include "fun_stack.h"  // stos funkcji
 
 #define MAXINDENTLENGHT 256     // maks długość identyfikatora
+#define SIZE 1
 
 int Size = 1;
 kontener *Kont;
@@ -97,11 +98,12 @@ printf("call\n");
 
 void K( void ){
     if (Kont == NULL){
-	Kont = malloc(Size *sizeof *Kont);
+	Kont = malloc(SIZE *sizeof *Kont);
+	Kont->kont = malloc(SIZE * sizeof *(Kont->kont));
 	Kont->size = 0;
     }else{
-	Size = Size + 1;
-	Kont = realloc(Kont, Size * sizeof *Kont);
+	Size = Size + SIZE;
+	Kont->kont = realloc(Kont->kont, Size*sizeof *(Kont->kont));
     }
 }
 
@@ -175,6 +177,7 @@ char *typ(int a){
 }
 
 int wypisywacz( void ){
+    kontener *COS = Kont;
 printf("O tu?\n");
     char *tmp_nazwa, *tmp_plik;
     int tmp_typ, tmp_numer_lini;
@@ -187,12 +190,14 @@ printf("Tu?\n");
 	fprintf(stderr, "'wypisywacz': kontener pusty.\n");
 	return 1;
     }
-    qsort(Kont, petl, sizeof(stat), comp);
-    tmp_nazwa = (Kont->kont[0]).nazwa;
-    tmp_typ = (Kont->kont[0]).typ;
-    tmp_plik = (Kont->kont[0]).plik;
-    tmp_numer_lini = (Kont->kont[0]).numer_lini;
-    printf("Funkcja :'%s'\n\t%s:\n %s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
+
+    qsort(COS->kont, petl, sizeof(stat), comp);
+    tmp_nazwa = (COS->kont[0]).nazwa;
+    tmp_typ = (COS->kont[0]).typ;
+    tmp_plik = (COS->kont[0]).plik;
+    tmp_numer_lini = (COS->kont[0]).numer_lini;
+
+    printf("Funkcja :'%s'\n\t%s:\n\t\t%s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
     for (int i = 1; i < petl; i++){
 	temp = Kont->kont[i];
 	tmp_numer_lini = temp.numer_lini;
@@ -202,17 +207,17 @@ printf("Tu?\n");
 	     tmp_typ = temp.typ;
 	     printf("\t%s:\n", typ(tmp_typ));
 	     tmp_plik = temp.plik;
-	     printf("%s w linijce %d\n", tmp_plik, tmp_numer_lini);
+	     printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
 	}
 	if (temp.typ != tmp_typ){
              tmp_typ = temp.typ;
              printf("\t%s:\n", typ(tmp_typ));
              tmp_plik = temp.plik;
-             printf("%s w linijce %d\n", tmp_plik, tmp_numer_lini);
+             printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
 	}	     
 	if (strcmp(temp.plik, tmp_plik) != 0){
              tmp_plik = temp.plik;
-             printf("%s w linijce %d\n", tmp_plik, tmp_numer_lini);
+             printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
 	}
     }
     return 0;

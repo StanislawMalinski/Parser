@@ -50,7 +50,7 @@ lexem_t alex_nextLexem( void ) {
          i \\ w napisie 
       */
         int cp = c;
-        while( (c = fgetc(ci)) != EOF && c != '"' && cp != '\\' ) {
+        while( (c= fgetc(ci)) != EOF && c != '"' && cp == '\\' ) {
             cp = c;
         }
         return c==EOF ? EOFILE : OTHER; 
@@ -60,8 +60,9 @@ lexem_t alex_nextLexem( void ) {
 	if (c == '*'){    						// długi komentarz
 	    int znaleziono_komentarz = 0;
 	    while(znaleziono_komentarz == 0){
-		while (fgetc(ci) != '*'){
-		    ;
+		while ((c = fgetc(ci)) != '*'){
+		    if(c =='\n')
+			ln++;
 		}
 		c = fgetc(ci);
 		if(c == '/'){

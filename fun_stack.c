@@ -1,6 +1,7 @@
 #include "fun_stack.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 Layer *top;
 
@@ -15,7 +16,8 @@ void put_on_fun_stack( int par_level, char *funame){
     Layer *New;
     New = malloc(sizeof(Layer));
     New->par_level = par_level;
-    New->funame = funame;
+    New->funame = strdup(funame);
+    //New->funame = funame;
     New->next = top;
     top = New;
 }
