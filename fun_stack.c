@@ -6,6 +6,8 @@
 Layer *top;
 
 int top_of_funstack(){
+	if(top == NULL)
+		return -1;
     int t = top->par_level;
     return t;
 }

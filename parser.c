@@ -47,19 +47,19 @@ analizatorSkladni (char *inpname)
     case CLOPAR:{	// zamykający nawias - to może być koniec prototypu, nagłówka albo wywołania
       int ln_nr = alex_getLN();
       if (top_of_funstack () == npar) {         // sprawdzamy, czy liczba nawiasów bilansuje się z wierzchołkiem stosu funkcji
-      char *get_fr = get_from_fun_stack ();     // jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
-          if (isKeyword(get_fr) == 0){          // za identyfikatorem znajdującym się na wierzchołku stosu
+      //char *get_fr = get_from_fun_stack ();     // jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
+         // if (isKeyword(get_fr) == 0){          // za identyfikatorem znajdującym się na wierzchołku stosu
           lexem_t nlex = alex_nextLexem ();     // bierzemy nast leksem
        //   printf("odstawiam get_from_fun_stack=\"%s\", ln_nr=\"%d\" oraz inpname=\"%s\"\n", get_from_fun_stack(), ln_nr, inpname);
               if (nlex == OPEBRA){   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
 	          nbra++;
-                  store_add_def (get_fr, ln_nr, inpname);
+                  store_add_def (get_from_fun_stack(), ln_nr, inpname);
               }else if (nbra == 0 ){   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
-                  store_add_proto (get_fr, ln_nr, inpname);
+                  store_add_proto (get_from_fun_stack(), ln_nr, inpname);
               }else{                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
-                  store_add_call (get_fr, ln_nr, inpname);
+                  store_add_call (get_from_fun_stack(), ln_nr, inpname);
 	      }
-	  }
+	  //}
       }
       npar--;
     }
@@ -144,9 +144,9 @@ int comp(const void *aa, const void *bb){
     c = strcmp(a->plik,b->plik);
     if (c != 0)				//Porównanie po nazwie pliku
 	return c;
-    if (a->numer_lini < b->numer_lini)	//Porównianie po numerze lini
+    if (a->numer_lini > b->numer_lini)	//Porównianie po numerze lini
         return 1;
-    else if (a->numer_lini > b->numer_lini)
+    else if (a->numer_lini < b->numer_lini)
         return -1;
     return c;
 	
