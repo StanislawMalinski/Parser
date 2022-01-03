@@ -8,8 +8,6 @@ static int  ln= 1;
 static char ident[256];
 static FILE *ci= NULL;
 
-int ile = 0;
-
 // keywords domyślnie 32 dodatkowe 10
 int li = 32;
 char *keywords[MAX_IGN] = {"auto", "double", "int", "struct","break", "else", "long", "switch", "case", "enum", "register", "typedef", "char", "extern", "return", "union", "continue", "for", "signed", "void", "do", "if", "static", "while", "default", "goto", "sizeof", "volatile", "const", "float", "short", "unsigned"};
@@ -28,7 +26,7 @@ void alex_init4file( FILE *in ) {
 }
 
 int isKeyword(char *word){  //Przetestuj
-    for (int i = 0; i < 32; i++){
+    for (int i = 0; i < li; i++){
 	if(strcmp(word, keywords[i]) == 0)
 	    return 1;
     }
