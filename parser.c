@@ -60,8 +60,9 @@ analizatorSkladni (char *inpname)
        //   printf("odstawiam get_from_fun_stack=\"%s\", ln_nr=\"%d\" oraz inpname=\"%s\"\n", get_from_fun_stack(), ln_nr, inpname);
           if (nlex == OPEBRA){   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
 printf("def\n");
+	      nbra++;
               store_add_def (get_from_fun_stack (), ln_nr, inpname);
-          }else if (nbra == 0){   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
+          }else if (nbra == 0 ){   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
 printf("proto\n");
               store_add_proto (get_from_fun_stack (), ln_nr, inpname);
           }else{                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
@@ -73,7 +74,7 @@ printf("call\n");
     }
     break;
     case OPEBRA:
-      printf("-> Opebra\n");
+      printf("-> Opebra (nbra = %d)\n", nbra);
       nbra++;
       break;
     case CLOBRA:
@@ -150,18 +151,18 @@ int comp(const void *aa, const void *bb){
     c = strcmp(a.nazwa,b.nazwa);
     if (c != 0)				//Porównanie po nazwie funkcji
 	return c;
-    if (a.typ > b.typ)			//Porównanie po typie 
+/*    if (a.typ < b.typ)			//Porównanie po typie 
 	return 1;
-    else if (a.typ < b.typ)
+    else if (a.typ > b.typ)
 	return -1;
     c = strcmp(a.plik,b.plik);
     if (c != 0)				//Porównanie po nazwie pliku
 	return c;
-    if (a.numer_lini > b.numer_lini)	//Porównianie po numerze lini
+    if (a.numer_lini < b.numer_lini)	//Porównianie po numerze lini
         return 1;
-    else if (a.numer_lini < b.numer_lini)
-        return -1;
-    return 0;
+    else if (a.numer_lini > b.numer_lini)
+        return -1;*/
+    return c;
 	
 }
 
@@ -177,28 +178,23 @@ char *typ(int a){
 }
 
 int wypisywacz( void ){
-    kontener *COS = Kont;
-printf("O tu?\n");
     char *tmp_nazwa, *tmp_plik;
     int tmp_typ, tmp_numer_lini;
-printf("Pewnie tu?\n");
     int petl = Kont->size;
-printf("Kurde\n");
     stat temp;
-printf("Tu?\n");
     if (petl < 1){
 	fprintf(stderr, "'wypisywacz': kontener pusty.\n");
 	return 1;
     }
 
-    qsort(COS->kont, petl, sizeof(stat), comp);
-    tmp_nazwa = (COS->kont[0]).nazwa;
-    tmp_typ = (COS->kont[0]).typ;
-    tmp_plik = (COS->kont[0]).plik;
-    tmp_numer_lini = (COS->kont[0]).numer_lini;
+    qsort(Kont->kont, petl, sizeof(stat), comp);
+    tmp_nazwa = "Makumba";(Kont->kont[0]).nazwa;
+    tmp_typ = (Kont->kont[0]).typ;
+    tmp_plik = (Kont->kont[0]).plik;
+    tmp_numer_lini =  (Kont->kont[0]).numer_lini;
 
     printf("Funkcja :'%s'\n\t%s:\n\t\t%s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
-    for (int i = 1; i < petl; i++){
+    for (int i = 0; i < petl; i++){
 	temp = Kont->kont[i];
 	tmp_numer_lini = temp.numer_lini;
 	if (strcmp(temp.nazwa,tmp_nazwa) != 0){
@@ -209,12 +205,14 @@ printf("Tu?\n");
 	     tmp_plik = temp.plik;
 	     printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
 	}
+
 	if (temp.typ != tmp_typ){
              tmp_typ = temp.typ;
              printf("\t%s:\n", typ(tmp_typ));
              tmp_plik = temp.plik;
              printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
-	}	     
+	}
+	     
 	if (strcmp(temp.plik, tmp_plik) != 0){
              tmp_plik = temp.plik;
              printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);

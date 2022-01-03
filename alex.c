@@ -3,12 +3,12 @@
 #include <string.h>
 #include <ctype.h>
 
-static int  ln= 0;
+static int  ln= 1;
 static char ident[256];
 static FILE *ci= NULL;
 
 void alex_init4file( FILE *in ) {
-   ln= 0;
+   ln= 1;
    ci= in;
 }
 
@@ -24,9 +24,11 @@ int isKeyword(char *word){  //Przetestuj
 lexem_t alex_nextLexem( void ) {
   char c;
   while( (c= fgetc(ci)) != EOF ) {
-    if( c == '\n' )
+    while( c  == '\n' ){
         ln++;
-    else if( isspace( c ) )
+	c = fgetc(ci);
+    }
+     if( isspace( c ) )
         continue;
     else if( c == '(' )
         return OPEPAR;
@@ -52,7 +54,9 @@ lexem_t alex_nextLexem( void ) {
         int cp = c;
         while( (c= fgetc(ci)) != EOF && c != '"' && cp == '\\' ) {
             cp = c;
-        }
+       	    if( c == '\n' )
+        	ln++;
+	    }
         return c==EOF ? EOFILE : OTHER; 
     }else if( c == '/' ) { 						// obsułga komentarzy
 	c = fgetc(ci);
@@ -75,7 +79,9 @@ lexem_t alex_nextLexem( void ) {
 	    while(fgetc(ci) != '\n'){
 		;
 	    }
+	    ln++;
 	}
+	continue;
     } if( isdigit( c ) || c == '.' ) {
       		/* liczba */
     } else {

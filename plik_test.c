@@ -1,11 +1,10 @@
 #include<stdio.h>
-
 // Pierwszy komentarz
 /* 
    Drugi komentarz
 */
 
-char *globaly_str = "Bardzo wazny \n globalny str \\ pod zadnym pozorem nie usuwac.\n";
+char *globaly_str = "Bardzo wazny \n globalnystr \\ pod zadnym pozorem nie usuwac.\n";
 
 int funkcja1(int a, int b);
 double funkcja2(double a, double b);
@@ -21,12 +20,11 @@ int main()
 	return 0;
 }
 
-int funkcja1(int a, int b)
-{
+int funkcja1(int a, int b){
 	return a+b;
 }
 
-double funkcja2(double a, double b)
+double funkcja2(double a, double b) // Definicja 'funkcja2'
 {
-	return a+b;
+	return a*b;
 }
