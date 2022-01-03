@@ -146,22 +146,22 @@ void store_add_call(char *funame, int line_nr, char *inpname){
 
 int comp(const void *aa, const void *bb){
     int c;
-    stat a = Kont->kont[*(int*)aa]; 
-    stat b = Kont->kont[*(int*)bb];
-    c = strcmp(a.nazwa,b.nazwa);
+    stat *a = (stat *)aa; 
+    stat *b = (stat *)bb;
+    c = strcmp(a->nazwa,b->nazwa);
     if (c != 0)				//Porównanie po nazwie funkcji
 	return c;
-/*    if (a.typ < b.typ)			//Porównanie po typie 
+    if (a->typ > b->typ)			//Porównanie po typie 
 	return 1;
-    else if (a.typ > b.typ)
+    else if (a->typ < b->typ)
 	return -1;
-    c = strcmp(a.plik,b.plik);
+    c = strcmp(a->plik,b->plik);
     if (c != 0)				//Porównanie po nazwie pliku
 	return c;
-    if (a.numer_lini < b.numer_lini)	//Porównianie po numerze lini
+    if (a->numer_lini < b->numer_lini)	//Porównianie po numerze lini
         return 1;
-    else if (a.numer_lini > b.numer_lini)
-        return -1;*/
+    else if (a->numer_lini > b->numer_lini)
+        return -1;
     return c;
 	
 }
@@ -188,7 +188,7 @@ int wypisywacz( void ){
     }
 
     qsort(Kont->kont, petl, sizeof(stat), comp);
-    tmp_nazwa = "Makumba";(Kont->kont[0]).nazwa;
+    tmp_nazwa = (Kont->kont[0]).nazwa;
     tmp_typ = (Kont->kont[0]).typ;
     tmp_plik = (Kont->kont[0]).plik;
     tmp_numer_lini =  (Kont->kont[0]).numer_lini;
