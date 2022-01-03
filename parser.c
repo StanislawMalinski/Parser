@@ -99,7 +99,7 @@ printf("call\n");
 
 void K( void ){
     if (Kont == NULL){
-	Kont = malloc(SIZE *sizeof *Kont);
+	Kont = malloc(sizeof *Kont);
 	Kont->kont = malloc(SIZE * sizeof *(Kont->kont));
 	Kont->size = 0;
     }else{
@@ -116,7 +116,7 @@ void store_add_def(char *funame, int line_nr, char *inpname){
     New->nazwa = funame;
     New->numer_lini = line_nr;
     New->plik = inpname;
-    Kont->kont[(Kont->size)++] = *New;
+    Kont->kont[Kont->size++] = *New;
     printf("def = %d\n", Kont->size);
 }
 
@@ -128,7 +128,7 @@ void store_add_proto(char *funame, int line_nr, char *inpname){
     New->nazwa = funame;
     New->numer_lini = line_nr;
     New->plik = inpname;
-    Kont->kont[(Kont->size)++] = *New;
+    Kont->kont[Kont->size++] = *New;
     printf("proto = %d\n", Kont->size);
 }
 
@@ -140,30 +140,37 @@ void store_add_call(char *funame, int line_nr, char *inpname){
     New->nazwa = funame;
     New->numer_lini = line_nr;
     New->plik = inpname;
-    Kont->kont[(Kont->size)++] = *New;
+    Kont->kont[Kont->size++] = *New;
     printf("call = %d\n", Kont->size);
 }
 
 int comp(const void *aa, const void *bb){
     int c;
-    stat a = Kont->kont[*(int*)aa]; 
-    stat b = Kont->kont[*(int*)bb];
-    c = strcmp(a.nazwa,b.nazwa);
-    if (c != 0)				//Porównanie po nazwie funkcji
+    int *a = (int*)aa;
+    int *b = (int*)bb;
+    stat ak = Kont->kont[*a]; 
+    stat bk = Kont->kont[*b];
+    c =  strcmp(ak.nazwa,bk.nazwa);
+    printf("Ja wielki genialny qsort uważam, że wynikiem comp dla (\"%s\", \"%s\") jest %d\n",ak.nazwa, bk.nazwa, c);
+    return c;
+/*    if (c != 0)				//Porównanie po nazwie funkcji
 	return c;
-/*    if (a.typ < b.typ)			//Porównanie po typie 
+
+     if (a.typ < b.typ)			//Porównanie po typie 
 	return 1;
     else if (a.typ > b.typ)
 	return -1;
+
     c = strcmp(a.plik,b.plik);
     if (c != 0)				//Porównanie po nazwie pliku
 	return c;
+
     if (a.numer_lini < b.numer_lini)	//Porównianie po numerze lini
         return 1;
     else if (a.numer_lini > b.numer_lini)
-        return -1;*/
-    return c;
-	
+        return -1;
+
+  */  return 0;	
 }
 
 char *typ(int a){
@@ -182,19 +189,28 @@ int wypisywacz( void ){
     int tmp_typ, tmp_numer_lini;
     int petl = Kont->size;
     stat temp;
+
     if (petl < 1){
 	fprintf(stderr, "'wypisywacz': kontener pusty.\n");
 	return 1;
     }
-
+    for (int i = 0; i < petl; i++){
+        printf("nazwa = %s\n", Kont->kont[i].nazwa);
+    }
     qsort(Kont->kont, petl, sizeof(stat), comp);
-    tmp_nazwa = "Makumba";(Kont->kont[0]).nazwa;
+
+    for (int i = 0; i < petl; i++)
+	printf("nazwa = %s\n", Kont->kont[i].nazwa);
+
+    tmp_nazwa = (Kont->kont[0]).nazwa;
     tmp_typ = (Kont->kont[0]).typ;
     tmp_plik = (Kont->kont[0]).plik;
     tmp_numer_lini =  (Kont->kont[0]).numer_lini;
 
-    printf("Funkcja :'%s'\n\t%s:\n\t\t%s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
+    printf("Funkcja '%s'\n\t%s:\n\t\t%s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
+
     for (int i = 0; i < petl; i++){
+//	printf("Nazwa nr.%d to %s\n", i, Kont->kont[i].nazwa);
 	temp = Kont->kont[i];
 	tmp_numer_lini = temp.numer_lini;
 	if (strcmp(temp.nazwa,tmp_nazwa) != 0){
@@ -204,16 +220,12 @@ int wypisywacz( void ){
 	     printf("\t%s:\n", typ(tmp_typ));
 	     tmp_plik = temp.plik;
 	     printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
-	}
-
-	if (temp.typ != tmp_typ){
+	} else if (temp.typ != tmp_typ){
              tmp_typ = temp.typ;
              printf("\t%s:\n", typ(tmp_typ));
              tmp_plik = temp.plik;
              printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
-	}
-	     
-	if (strcmp(temp.plik, tmp_plik) != 0){
+	} else if (strcmp(temp.plik, tmp_plik) != 0){
              tmp_plik = temp.plik;
              printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
 	}
