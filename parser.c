@@ -19,7 +19,6 @@ analizatorSkladni (char *inpname)
 
   int nbra = 0;   // bilans nawiasów klamrowych {}
   int npar = 0;   // bilans nawiasów zwykłych ()
-
   alex_init4file (in);          // ustaw analizator leksykalny, aby czytał in
   lexem_t lex;
 
@@ -27,13 +26,10 @@ analizatorSkladni (char *inpname)
   while (lex != EOFILE) {
     switch (lex) {
     case IDENT:{
-        printf("-> Ident\n");
         char *iname = alex_ident ();             // zapamiętaj identyfikator i patrz co dalej
         lexem_t nlex = alex_nextLexem ();
         if (nlex == OPEPAR) {                    // nawias otwierający - to zapewne funkcja
-            printf("-> Opepar(po Ident)\n");
             npar++;
-	  printf("odstawiam npar=\"%d\" oraz iname=\"%s\"\n", npar, iname);  
           put_on_fun_stack (npar, iname);      // odłóż na stos funkcji
                                                  // stos f. jest niezbędny, aby poprawnie obsłużyć sytuacje typu
                                                  // f1( 5, f2( a ), f3( b ) )
@@ -45,40 +41,33 @@ analizatorSkladni (char *inpname)
       }
       break;
     case OPEPAR:{
-      printf("-> Opepar\n");
       npar++;
     }
     break;
     case CLOPAR:{	// zamykający nawias - to może być koniec prototypu, nagłówka albo wywołania
-      printf("-> Clopar (npar = %d)\n", npar);
       int ln_nr = alex_getLN();
-      if (top_of_funstack () == npar) {       // sprawdzamy, czy liczba nawiasów bilansuje się z wierzchołkiem stosu funkcji
-                                                // jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
-                                                // za identyfikatorem znajdującym się na wierzchołku stosu
+      if (top_of_funstack () == npar) {         // sprawdzamy, czy liczba nawiasów bilansuje się z wierzchołkiem stosu funkcji
+      char *get_fr = get_from_fun_stack ();     // jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
+          if (isKeyword(get_fr) == 0){          // za identyfikatorem znajdującym się na wierzchołku stosu
           lexem_t nlex = alex_nextLexem ();     // bierzemy nast leksem
-	  printf("Tu jeszcze działa\n");
        //   printf("odstawiam get_from_fun_stack=\"%s\", ln_nr=\"%d\" oraz inpname=\"%s\"\n", get_from_fun_stack(), ln_nr, inpname);
-          if (nlex == OPEBRA){   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
-printf("def\n");
-	      nbra++;
-              store_add_def (get_from_fun_stack (), ln_nr, inpname);
-          }else if (nbra == 0 ){   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
-printf("proto\n");
-              store_add_proto (get_from_fun_stack (), ln_nr, inpname);
-          }else{                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
-printf("call\n");
-              store_add_call (get_from_fun_stack (), ln_nr, inpname);
+              if (nlex == OPEBRA){   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
+	          nbra++;
+                  store_add_def (get_fr, ln_nr, inpname);
+              }else if (nbra == 0 ){   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
+                  store_add_proto (get_fr, ln_nr, inpname);
+              }else{                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
+                  store_add_call (get_fr, ln_nr, inpname);
+	      }
 	  }
       }
       npar--;
     }
     break;
     case OPEBRA:
-      printf("-> Opebra (nbra = %d)\n", nbra);
       nbra++;
       break;
     case CLOBRA:
-      printf("-> Clobra\n");
       nbra--;
       break;
     case ERROR:{
@@ -117,7 +106,6 @@ void store_add_def(char *funame, int line_nr, char *inpname){
     New->numer_lini = line_nr;
     New->plik = inpname;
     Kont->kont[Kont->size++] = *New;
-    printf("def = %d\n", Kont->size);
 }
 
 void store_add_proto(char *funame, int line_nr, char *inpname){
@@ -129,7 +117,6 @@ void store_add_proto(char *funame, int line_nr, char *inpname){
     New->numer_lini = line_nr;
     New->plik = inpname;
     Kont->kont[Kont->size++] = *New;
-    printf("proto = %d\n", Kont->size);
 }
 
 void store_add_call(char *funame, int line_nr, char *inpname){
@@ -141,36 +128,28 @@ void store_add_call(char *funame, int line_nr, char *inpname){
     New->numer_lini = line_nr;
     New->plik = inpname;
     Kont->kont[Kont->size++] = *New;
-    printf("call = %d\n", Kont->size);
 }
 
 int comp(const void *aa, const void *bb){
     int c;
-    int *a = (int*)aa;
-    int *b = (int*)bb;
-    stat ak = Kont->kont[*a]; 
-    stat bk = Kont->kont[*b];
-    c =  strcmp(ak.nazwa,bk.nazwa);
-    printf("Ja wielki genialny qsort uważam, że wynikiem comp dla (\"%s\", \"%s\") jest %d\n",ak.nazwa, bk.nazwa, c);
-    return c;
-/*    if (c != 0)				//Porównanie po nazwie funkcji
+    stat *a = (stat *)aa; 
+    stat *b = (stat *)bb;
+    c = strcmp(a->nazwa,b->nazwa);
+    if (c != 0)				//Porównanie po nazwie funkcji
 	return c;
-
-     if (a.typ < b.typ)			//Porównanie po typie 
+    if (a->typ > b->typ)			//Porównanie po typie 
 	return 1;
-    else if (a.typ > b.typ)
+    else if (a->typ < b->typ)
 	return -1;
-
-    c = strcmp(a.plik,b.plik);
+    c = strcmp(a->plik,b->plik);
     if (c != 0)				//Porównanie po nazwie pliku
 	return c;
-
-    if (a.numer_lini < b.numer_lini)	//Porównianie po numerze lini
+    if (a->numer_lini < b->numer_lini)	//Porównianie po numerze lini
         return 1;
-    else if (a.numer_lini > b.numer_lini)
+    else if (a->numer_lini > b->numer_lini)
         return -1;
-
-  */  return 0;	
+    return c;
+	
 }
 
 char *typ(int a){
@@ -194,14 +173,7 @@ int wypisywacz( void ){
 	fprintf(stderr, "'wypisywacz': kontener pusty.\n");
 	return 1;
     }
-    for (int i = 0; i < petl; i++){
-        printf("nazwa = %s\n", Kont->kont[i].nazwa);
-    }
     qsort(Kont->kont, petl, sizeof(stat), comp);
-
-    for (int i = 0; i < petl; i++)
-	printf("nazwa = %s\n", Kont->kont[i].nazwa);
-
     tmp_nazwa = (Kont->kont[0]).nazwa;
     tmp_typ = (Kont->kont[0]).typ;
     tmp_plik = (Kont->kont[0]).plik;
@@ -210,12 +182,11 @@ int wypisywacz( void ){
     printf("Funkcja '%s'\n\t%s:\n\t\t%s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
 
     for (int i = 0; i < petl; i++){
-//	printf("Nazwa nr.%d to %s\n", i, Kont->kont[i].nazwa);
 	temp = Kont->kont[i];
 	tmp_numer_lini = temp.numer_lini;
 	if (strcmp(temp.nazwa,tmp_nazwa) != 0){
              tmp_nazwa = temp.nazwa;
-	     printf("Funkcja '%s'\n",tmp_nazwa);
+	     printf("\n\nFunkcja '%s'\n",tmp_nazwa);
 	     tmp_typ = temp.typ;
 	     printf("\t%s:\n", typ(tmp_typ));
 	     tmp_plik = temp.plik;

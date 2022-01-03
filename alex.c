@@ -3,9 +3,24 @@
 #include <string.h>
 #include <ctype.h>
 
+#define MAX_IGN 42
 static int  ln= 1;
 static char ident[256];
 static FILE *ci= NULL;
+
+int ile = 0;
+
+// keywords domyślnie 32 dodatkowe 10
+int li = 32;
+char *keywords[MAX_IGN] = {"auto", "double", "int", "struct","break", "else", "long", "switch", "case", "enum", "register", "typedef", "char", "extern", "return", "union", "continue", "for", "signed", "void", "do", "if", "static", "while", "default", "goto", "sizeof", "volatile", "const", "float", "short", "unsigned"};
+
+void dod_key(char *word){
+    keywords[++li] = word;
+    printf("Dodano %s\n", word);
+    printf("%s w miejscu %d\n", keywords[li], li);
+    if(li > MAX_IGN)
+	printf("Błąd uauauauaau\n");
+}
 
 void alex_init4file( FILE *in ) {
    ln= 1;
@@ -13,10 +28,9 @@ void alex_init4file( FILE *in ) {
 }
 
 int isKeyword(char *word){  //Przetestuj
-    char *keywords[32] = {"auto", "double", "int", "struct","break", "else", "long", "switch", "case", "enum", "register", "typedef", "char", "extern", "return", "union", "continue", "for", "signed", "void", "do", "if", "static", "while", "default", "goto", "sizeof", "volatile", "const", "float", "short", "unsigned"};
     for (int i = 0; i < 32; i++){
 	if(strcmp(word, keywords[i]) == 0)
-		return 1;
+	    return 1;
     }
     return 0;
 }
@@ -45,7 +59,7 @@ lexem_t alex_nextLexem( void ) {
             ident[i++] = c;
         ident[i] = '\0';
 	ungetc(c, ci);
-	printf("%s\n", ident);
+	//printf("%s\n", ident);
         return isKeyword(ident) ? OTHER : IDENT;
     }else if( c == '"' ) {
       /* Uwaga: tu trzeba jeszcze poprawic obsluge nowej linii w trakcie napisu

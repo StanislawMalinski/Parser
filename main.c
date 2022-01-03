@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #include "alex.h"
 #include "fun_stack.h"
 #include "parser.h"
 
+#define BUF 20
 
 // Wywołanie z {2} gdy podajemy liste funkckji do ignorowanie
 //           z {1} gdy takowej listy nie podajemy
@@ -26,6 +26,7 @@ void help(char *nazwa){
 }
 
 int main(int argc, char **argv){
+	char buf[BUF];
 	int i, pocz = 0;
 	int tryb = argc > 1 ? atoi(argv[1]) : 0;
 	if (tryb != 1 && tryb != 2){
@@ -40,7 +41,11 @@ int main(int argc, char **argv){
 			help(argv[0]);
 			return 2;
 		}
-		pocz++;
+		while (fgets(buf, BUF, ignoruj) != NULL){
+			while (buf[strlen(buf)-1] == '\n')
+				buf[strlen(buf)-1] = 0;
+			dod_key(buf);
+		}
 	}
 	if (argc < 3){
 		fprintf(stderr, "%s: Nie praiwdłowy format wejściowy.\nNie podano plików wejściowych.\n", argv[0]); 
