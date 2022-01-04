@@ -1,7 +1,7 @@
 README.md
 
 Program "Parser" zadanie 8
-wykonany przez Stanisaława Malińskiego oraz Weronikę Zbierowską.
+wykonany przez Stanisława Malińskiego oraz Weronikę Zbierowską.
 
 Instrukcja użytkowania:
 - Aby wprowadzić własne dane, proszę skompilować program komendą:  
