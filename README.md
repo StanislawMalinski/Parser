@@ -12,5 +12,5 @@ Instrukcja użytkowania:
 	**make test1*  
 - Aby wyświetlić przykład działania drugiego trybu Parsera, proszę wprowadzić komendę:  
 	**make test2**  
-- Aby wykonać test stosu, proszę wprowadzić komendę`:  
+- Aby wykonać test stosu, proszę wprowadzić komendę:  
 	**make testF**  
