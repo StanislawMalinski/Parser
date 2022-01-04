@@ -9,7 +9,7 @@ Instrukcja użytkowania:
   Instrukcje dalszego działania można wyświetlić poprzez uruchomienie pliku wykonawczego:  
 	**./Parser**  
 - Aby wyświetlić przykład działania pierwszego trybu Parsera, proszę wprowadzić komendę:  
-	**make test1*  
+	**make test1**
 - Aby wyświetlić przykład działania drugiego trybu Parsera, proszę wprowadzić komendę:  
 	**make test2**  
 - Aby wykonać test stosu, proszę wprowadzić komendę:  
