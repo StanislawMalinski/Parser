@@ -1,16 +1,16 @@
 README.md
 
 Program "Parser" zadanie 8
-wykonany przez Stanisaława Malińskiego oraz Weronike Zbierowską
+Wykonany przez Stanisaława Malińskiego oraz Weronikę Zbierowską.
 
 Instrukcja użytkowania:
-- Aby wprowadzić własne dane prosze skompilować progrma komendą:  
+- Aby wprowadzić własne dane, proszę skompilować program komendą:  
 	**make**  
-instrukcje dalszego działania można wyświetlić przy uruchomieniu pliku wykonawczego:  
+  Instrukcje dalszego działania można wyświetlić poprzez uruchomienie pliku wykonawczego:  
 	**./Parser**  
-- Aby wyświetlić przykład działania pierwszego trybu Parsera prosze wporwadzić komende:  
+- Aby wyświetlić przykład działania pierwszego trybu Parsera, proszę wprowadzić komendę:  
 	**make test1*  
-- Aby wyświetlić przykład działania drugiego trybu Parsera prosze wporwadzić komende:  
+- Aby wyświetlić przykład działania drugiego trybu Parsera, proszę wprowadzić komendę:  
 	**make test2**  
-- Aby wykonać test stosu prosze wprowadzić komedne:  
+- Aby wykonać test stosu, proszę wprowadzić komendę`:  
 	**make testF**  

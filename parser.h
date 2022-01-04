@@ -1,26 +1,30 @@
 #ifndef _PARSER_H_IS_INCLUDED_
 #define _PARSER_H_IS_INCLUDED_
 
-typedef struct TYPE{
-    int typ;              //1 - definicja, 2 - prototyp, 3 - wywołanie
+typedef struct TYPE         // przechowuje informacje o pojedynczym wystąpieniu jakiejś funkcji
+{
+    int typ;                //1 - definicja, 2 - prototyp, 3 - wywołanie
     char *nazwa;
-    int numer_lini;
+    int numer_linii;
     char *plik;
-}stat;
+} stat;
 
-typedef struct KONT{
+typedef struct KONT         // przechowuje informacje o wszystkich wystąpieniach wszystkich funkcji
+{
     int size;
     stat *kont;
-}kontener;
+} kontener;
 
-void analizatorSkladni(char *inpname);
+void analizatorSkladni(char *inpname);                              // analizuje składnię programu
 
-void store_add_def(char *funame, int line_nr, char *inpname);
+void kontener_pamiec(void);                                         // dynamicznie alokuje pamiec dla kontenera
 
-void store_add_proto(char *funame, int line_nr, char *inpname);
+void store_add_def(char *funame, int line_nr, char *inpname);       // dodaje informacje o definicji funkcji do struktur
 
-void store_add_call(char *funame, int line_nr, char *inpname);
+void store_add_proto(char *funame, int line_nr, char *inpname);     // dodaje informacje o prototypie funckji do struktur
 
-int wypisywacz( void );
+void store_add_call(char *funame, int line_nr, char *inpname);      // dodaje informacje o wywołaniu funkcji do struktur
+
+int wypisywacz(void);                                               // wypisuje informacje o funkcjach w programie
 
 #endif

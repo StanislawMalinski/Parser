@@ -1,115 +1,128 @@
 #include "alex.h"
 
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_IGN 42
-static int  ln= 1;
+#define MAX_IGN 256             // maksymalna ilość funkcji do ignorowania
+static int li = 0;
+static char *keywords[MAX_IGN];
+
+static int  ln = 1;
 static char ident[256];
-static FILE *ci= NULL;
+static FILE *ci = NULL;
 
-// keywords domyślnie 32 dodatkowe 10
-int li = 32;
-char *keywords[MAX_IGN] = {"auto", "double", "int", "struct","break", "else", "long", "switch", "case", "enum", "register", "typedef", "char", "extern", "return", "union", "continue","for", "signed", "void", "do", "if", "static", "while", "default", "goto", "sizeof", "volatile", "const", "float", "short", "unsigned"};
-
-
-void dod_key(char *word){
-    keywords[li] = strdup(word);
-//    printf("%s w miejscu %d\n", keywords[li], li);
+void dod_key(char *word)
+{
     if(li > MAX_IGN)
-	printf("Błąd uauauauaau\n");
+    {
+	    fprintf(stderr,"Zbyt wiele funkcji do ignorowania!\n");
+    }
+    keywords[li] = strdup(word);
     li++;
 }
 
-void alex_init4file( FILE *in ) {
-   ln= 1;
-   ci= in;
+void alex_init4file(FILE *in)
+{
+   ln = 1;
+   ci = in;
 }
 
-int isKeyword(char *word){ 
-    for (int i = 0; i < li; i++){
-	if(strcmp(word, keywords[i]) == 0)
-	    return 1;
-    }
+int isKeyword(char *word)
+{ 
+    for (int i = 0; i < li; i++)
+	    if(strcmp(word, keywords[i]) == 0)
+	        return 1;
     return 0;
 }
 
-lexem_t alex_nextLexem( void ) {
+lexem_t alex_nextLexem(void)
+{
   char c;
-  while( (c= fgetc(ci)) != EOF ) {
-    while( c  == '\n' ){
+  while((c= fgetc(ci)) != EOF)
+  {
+    while(c  == '\n')
+    {
         ln++;
-	c = fgetc(ci);
+	    c = fgetc(ci);
     }
-     if( isspace( c ) )
+    if(isspace(c))
         continue;
-    else if( c == '(' )
+    else if(c == '(')
         return OPEPAR;
-    else if( c == ')' )
+    else if(c == ')')
         return CLOPAR;
-    else if( c == '{' )
+    else if(c == '{')
         return OPEBRA;
-    else if( c == '}' )
+    else if(c == '}')
         return CLOBRA;
-    else if( isalpha( c ) || c == '_') {
-        int i= 1;
+    else if(isalpha(c) || c == '_')
+    {
+        int i = 1;
         ident[0] = c;
-        while( isalnum( c = fgetc(ci) ) != 0 || c == '_')
+        while(isalnum(c = fgetc(ci)) != 0 || c == '_')
             ident[i++] = c;
         ident[i] = '\0';
-	ungetc(c, ci);
-	//printf("%s\n", ident);
+	    ungetc(c, ci);
         return isKeyword(ident) ? OTHER : IDENT;
-    }else if( c == '"' ) {
-      /* Uwaga: tu trzeba jeszcze poprawic obsluge nowej linii w trakcie napisu
-         i \\ w napisie 
-      */
+    }
+    else if(c == '"')
+    {
         int cp = c;
-        while( (c= fgetc(ci)) != EOF && c != '"' && cp == '\\' ) {
-            //cp = c;
-       	    while( (c = fgetc(ci))  == '\n' )
-        	ln++;
+        while((c= fgetc(ci)) != EOF && c != '"' && cp == '\\')
+        {
+       	    while((c = fgetc(ci)) == '\n')
+        	    ln++;
 	    }
-	ungetc(c,ci);  // Tu dodałem
-        return c==EOF ? EOFILE : OTHER; 
-    }else if( c == '/' ) { 						// obsułga komentarzy
-	c = fgetc(ci);
+	    ungetc(c,ci);
+        return c == EOF ? EOFILE : OTHER;
+    }
+    else if(c == '/')                                   // obsługa komentarzy
+    {
+	    c = fgetc(ci);
 
-	if (c == '*'){    						// długi komentarz
-	    int znaleziono_komentarz = 0;
-	    while(znaleziono_komentarz == 0){
-		while ((c = fgetc(ci)) != '*'){
-		    if(c =='\n')
-			ln++;
-		}
-		c = fgetc(ci);
-		if(c == '/'){
-		    znaleziono_komentarz = 1;
-		}else if ( c == '*'){
-		    ;
-		}
+	    if(c == '*')                                    // długi komentarz
+        {
+	        int znaleziono_komentarz = 0;
+	        while(znaleziono_komentarz == 0)
+            {
+		        while((c = fgetc(ci)) != '*')
+                {
+		            if(c =='\n')
+			            ln++;
+		        }
+		        c = fgetc(ci);
+		        if(c == '/')
+                {
+		            znaleziono_komentarz = 1;
+		        }
+	        }
+        }
+        else if(c == '/')                               // krótki komentarz
+        {
+	        while(fgetc(ci) != '\n')
+            {
+		        ;
+	        }
+	        ln++;
 	    }
-	} else if (c == '/'){ 						// komentarz kończy się w tej linije
-	    while(fgetc(ci) != '\n'){
-		;
-	    }
-	    ln++;
-	}
-	continue;
-    }else  if( isdigit( c ) || c == '.' ) {
-      		/* liczba */
-    } else {
+	    continue;
+    }
+    else
+    {
         return OTHER;
     }
   }       
   return EOFILE;
 }
 
-char *  alex_ident( void ) {
-   return ident;
+char * alex_ident(void)
+{
+    return ident;
 }
 
-int     alex_getLN() {
-        return ln;
+int alex_getLN()
+{
+    return ln;
 }
 

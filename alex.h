@@ -6,14 +6,18 @@
 // interesujące leksemy: błąd, inny symbol, koniec pliku, otwierająca klamra {, 
 //                       zamykająca klamra }, identyfikator, otwierający nawias, 
 //                       zamykający nawias
-typedef enum { ERROR, OTHER, EOFILE, OPEBRA, CLOBRA, IDENT, OPEPAR, CLOPAR } lexem_t;
+typedef enum {ERROR, OTHER, EOFILE, OPEBRA, CLOBRA, IDENT, OPEPAR, CLOPAR} lexem_t;
 
-void dod_key(char *);
-int isKeyword(char *); 
-void    alex_init4file( FILE * );  // zacznij czytać nowy plik
-lexem_t alex_nextLexem( void );    // daj kolejny leksem w czytanym pliku
-char *  alex_ident( void );        // daj ostatni identyfikator
-int     alex_getLN();              // daj aktualny nr linii
+void dod_key(char *);               // dodaje funkcję do listy ignorowanych funkcji
+
+int isKeyword(char *);              // sprawdza, czy dana funkcja powinna być ignorowana
+
+void alex_init4file(FILE *);        // zacznij czytać nowy plik
+
+lexem_t alex_nextLexem(void);       // daj kolejny leksem w czytanym pliku
+
+char * alex_ident(void);            // daj ostatni identyfikator
+
+int alex_getLN();                   // daj aktualny nr linii
 
 #endif
-

@@ -1,19 +1,21 @@
 #ifndef _FUN_STACK_H_IS_INCLUDED_
 #define _FUN_STACK_H_IS_INCLUDED_
 
-typedef struct nalesnik{
+typedef struct nalesnik
+{
     int par_level;
     char *funame;
     struct nalesnik *next;
-}Layer;
+} Layer;
 
-int top_of_funstack( void ); 
+int top_of_funstack(void); 
      // zwraca par_level - "zagłębienie nawiasowe"
      // przechowywane na szczycie
-void put_on_fun_stack( int par_level, char *funame ); 
+void put_on_fun_stack(int par_level, char *funame); 
      // odkłada na stos 
      // parę (funame,par_level)
-char *get_from_fun_stack( void );
+char *get_from_fun_stack(void);
      // usuwa z wierzchołka parę 
      // (funame,par_level), zwraca zdjętą funame
+
 #endif
