@@ -25,6 +25,10 @@ void store_add_proto(char *funame, int line_nr, char *inpname);     // dodaje in
 
 void store_add_call(char *funame, int line_nr, char *inpname);      // dodaje informacje o wywołaniu funkcji do struktur
 
+int comp(const void *aa, const void *bb);                           // funkcja porównująca dla quicksort
+
+char * typ(int a);                                                  // zamienia typ funkcji z formy numerycznej na słowną
+
 int wypisywacz(void);                                               // wypisuje informacje o funkcjach w programie
 
 #endif

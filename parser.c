@@ -171,7 +171,7 @@ int comp(const void *aa, const void *bb)
     return 0;
 }
 
-char *typ(int a)
+char * typ(int a)
 {
     if(a == 1)
 	    return "Definicja";
