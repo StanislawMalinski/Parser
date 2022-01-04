@@ -31,7 +31,6 @@ analizatorSkladni (char *inpname)
         lexem_t nlex = alex_nextLexem ();
         if (nlex == OPEPAR) {                    // nawias otwierający - to zapewne funkcja
             npar++;
-	  printf("Następny znak po '%s' to '(', npar = %d\n", iname, npar);
           put_on_fun_stack (npar, iname);      // odłóż na stos funkcji
                                                  // stos f. jest niezbędny, aby poprawnie obsłużyć sytuacje typu
                                                  // f1( 5, f2( a ), f3( b ) )
@@ -47,7 +46,6 @@ analizatorSkladni (char *inpname)
     }
     break;
     case CLOPAR:{				// zamykający nawias - to może być koniec prototypu, nagłówka albo wywołania
-      printf("Tu jest CLOPAR top = %d\n", top_of_funstack());
       int ln_nr = alex_getLN();
       if (top_of_funstack () == npar) {         // sprawdzamy, czy liczba nawiasów bilansuje się z wierzchołkiem stosu funkcji
           					// jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
@@ -55,19 +53,12 @@ analizatorSkladni (char *inpname)
           lexem_t nlex = alex_nextLexem ();     // bierzemy nast leksem
           if (nlex == OPEBRA){   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
                   store_add_def (get_from_fun_stack(), ln_nr, inpname);
-		 printf("def\n");
-		Help++;
           }else if (nbra == 0 ){   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
                   store_add_proto (get_from_fun_stack(), ln_nr, inpname);
-                 printf("proto\n");
-                Help++;
           }else{                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
                   store_add_call (get_from_fun_stack(), ln_nr, inpname);
-                 printf("call\n");
-                Help++;
 	  } 
         npar--;
-	printf("ale po odjęciu npar = %d\n", npar);
 	lex = nlex;
     	continue;
 	}
@@ -81,7 +72,6 @@ analizatorSkladni (char *inpname)
       nbra--;
       break;
     case ERROR:{
-      printf("-> Error\n");
         printf("-> ERROR\n");
         fprintf (stderr, "\nBUUUUUUUUUUUUUUUUUUUUUU!\n"
                  "W pliku %s (linia %d) są błędy składni.\n"
@@ -189,12 +179,7 @@ int wypisywacz( void ){
     tmp_plik = (Kont->kont[0]).plik;
     tmp_numer_lini =  (Kont->kont[0]).numer_lini;
 
-    for (int k = 0; k<Help; k++)
-	printf("%d.funkcje%s\n", k,Kont->kont[k].nazwa);
-
-    printf("BTW, jest %d = %d call/porp/def\n",petl, Help);
-
-    printf("Funkcja '%s'\n\t%s:\n\t\t%s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
+    printf("\n\nFunkcja '%s'\n\t%s:\n\t\t%s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
 
     for (int i = 1; i < petl; i++){
 	temp = Kont->kont[i];

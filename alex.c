@@ -70,6 +70,7 @@ lexem_t alex_nextLexem( void ) {
        	    while( (c = fgetc(ci))  == '\n' )
         	ln++;
 	    }
+	ungetc(c,ci);  // Tu dodałem
         return c==EOF ? EOFILE : OTHER; 
     }else if( c == '/' ) { 						// obsułga komentarzy
 	c = fgetc(ci);
@@ -95,7 +96,7 @@ lexem_t alex_nextLexem( void ) {
 	    ln++;
 	}
 	continue;
-    } if( isdigit( c ) || c == '.' ) {
+    }else  if( isdigit( c ) || c == '.' ) {
       		/* liczba */
     } else {
         return OTHER;

@@ -1,15 +1,12 @@
 all:
-	gcc -Wall --pedantic main.c parser.c alex.c fun_stack.c -o dzialacz
+	gcc -Wall --pedantic main.c parser.c alex.c fun_stack.c -o Parser
 test1:all
-	./dzialacz 1 plik_test.c
-	rm dzialacz
+	./Parser 1 plik_test.c
+	rm Parser
 test2:all
-	./dzialacz 2 ign plik_test.c
-	rm dzialacz
+	./Parser 2 ign plik_test.c
+	rm Parser
 testF:
 	gcc -Wall --pedantic TFunCH.c fun_stack.c -o test
 	./test
 	rm test
-gdb:
-	gcc -Wall --pedantic -ggdb main.c parser.c alex.c fun_stack.c
-	gdb ./a.out 1 plik_test.c
