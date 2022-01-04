@@ -9,6 +9,7 @@
 #define MAXINDENTLENGHT 256     // maks długość identyfikatora
 #define SIZE 1
 
+int Help = 0;
 int Size = 1;
 kontener *Kont;
 
@@ -30,6 +31,7 @@ analizatorSkladni (char *inpname)
         lexem_t nlex = alex_nextLexem ();
         if (nlex == OPEPAR) {                    // nawias otwierający - to zapewne funkcja
             npar++;
+	  printf("Następny znak po '%s' to '(', npar = %d\n", iname, npar);
           put_on_fun_stack (npar, iname);      // odłóż na stos funkcji
                                                  // stos f. jest niezbędny, aby poprawnie obsłużyć sytuacje typu
                                                  // f1( 5, f2( a ), f3( b ) )
@@ -44,24 +46,32 @@ analizatorSkladni (char *inpname)
       npar++;
     }
     break;
-    case CLOPAR:{	// zamykający nawias - to może być koniec prototypu, nagłówka albo wywołania
+    case CLOPAR:{				// zamykający nawias - to może być koniec prototypu, nagłówka albo wywołania
+      printf("Tu jest CLOPAR top = %d\n", top_of_funstack());
       int ln_nr = alex_getLN();
       if (top_of_funstack () == npar) {         // sprawdzamy, czy liczba nawiasów bilansuje się z wierzchołkiem stosu funkcji
-      //char *get_fr = get_from_fun_stack ();     // jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
-         // if (isKeyword(get_fr) == 0){          // za identyfikatorem znajdującym się na wierzchołku stosu
+          					// jeśli tak, to właśnie wczytany nawias jest domknięciem nawiasu otwartego
+        				        // za identyfikatorem znajdującym się na wierzchołku stosu
           lexem_t nlex = alex_nextLexem ();     // bierzemy nast leksem
-       //   printf("odstawiam get_from_fun_stack=\"%s\", ln_nr=\"%d\" oraz inpname=\"%s\"\n", get_from_fun_stack(), ln_nr, inpname);
-              if (nlex == OPEBRA){   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
-	          nbra++;
+          if (nlex == OPEBRA){   // nast. leksem to klamra a więc mamy do czynienia z def. funkcji
                   store_add_def (get_from_fun_stack(), ln_nr, inpname);
-              }else if (nbra == 0 ){   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
+		 printf("def\n");
+		Help++;
+          }else if (nbra == 0 ){   // nast. leksem to nie { i jesteśmy poza blokami - to musi być prototyp
                   store_add_proto (get_from_fun_stack(), ln_nr, inpname);
-              }else{                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
+                 printf("proto\n");
+                Help++;
+          }else{                  // nast. leksem to nie { i jesteśmy wewnątrz bloku - to zapewne wywołanie
                   store_add_call (get_from_fun_stack(), ln_nr, inpname);
-	      }
-	  //}
-      }
-      npar--;
+                 printf("call\n");
+                Help++;
+	  } 
+        npar--;
+	printf("ale po odjęciu npar = %d\n", npar);
+	lex = nlex;
+    	continue;
+	}
+    npar--;
     }
     break;
     case OPEBRA:
@@ -148,7 +158,7 @@ int comp(const void *aa, const void *bb){
         return 1;
     else if (a->numer_lini < b->numer_lini)
         return -1;
-    return c;
+    return 0;
 	
 }
 
@@ -179,9 +189,14 @@ int wypisywacz( void ){
     tmp_plik = (Kont->kont[0]).plik;
     tmp_numer_lini =  (Kont->kont[0]).numer_lini;
 
+    for (int k = 0; k<Help; k++)
+	printf("%d.funkcje%s\n", k,Kont->kont[k].nazwa);
+
+    printf("BTW, jest %d = %d call/porp/def\n",petl, Help);
+
     printf("Funkcja '%s'\n\t%s:\n\t\t%s w linijce %d\n", tmp_nazwa, typ(tmp_typ), tmp_plik, tmp_numer_lini);
 
-    for (int i = 0; i < petl; i++){
+    for (int i = 1; i < petl; i++){
 	temp = Kont->kont[i];
 	tmp_numer_lini = temp.numer_lini;
 	if (strcmp(temp.nazwa,tmp_nazwa) != 0){
@@ -199,6 +214,8 @@ int wypisywacz( void ){
 	} else if (strcmp(temp.plik, tmp_plik) != 0){
              tmp_plik = temp.plik;
              printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
+	}else{
+	printf("\t\t%s w linijce %d\n", tmp_plik, tmp_numer_lini);
 	}
     }
     return 0;

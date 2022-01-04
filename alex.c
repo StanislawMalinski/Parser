@@ -10,12 +10,12 @@ static FILE *ci= NULL;
 
 // keywords domyślnie 32 dodatkowe 10
 int li = 32;
-char *keywords[MAX_IGN] = {"auto", "double", "int", "struct","break", "else", "long", "switch", "case", "enum", "register", "typedef", "char", "extern", "return", "union", "continue", "for", "signed", "void", "do", "if", "static", "while", "default", "goto", "sizeof", "volatile", "const", "float", "short", "unsigned"};
+char *keywords[MAX_IGN] = {"auto", "double", "int", "struct","break", "else", "long", "switch", "case", "enum", "register", "typedef", "char", "extern", "return", "union", "continue","for", "signed", "void", "do", "if", "static", "while", "default", "goto", "sizeof", "volatile", "const", "float", "short", "unsigned"};
+
 
 void dod_key(char *word){
     keywords[li] = strdup(word);
-    printf("Dodano %s\n", word);
-    printf("%s w miejscu %d\n", keywords[li], li);
+//    printf("%s w miejscu %d\n", keywords[li], li);
     if(li > MAX_IGN)
 	printf("Błąd uauauauaau\n");
     li++;
@@ -26,7 +26,7 @@ void alex_init4file( FILE *in ) {
    ci= in;
 }
 
-int isKeyword(char *word){  //Przetestuj
+int isKeyword(char *word){ 
     for (int i = 0; i < li; i++){
 	if(strcmp(word, keywords[i]) == 0)
 	    return 1;
@@ -51,10 +51,10 @@ lexem_t alex_nextLexem( void ) {
         return OPEBRA;
     else if( c == '}' )
         return CLOBRA;
-    else if( isalpha( c ) ) {
+    else if( isalpha( c ) || c == '_') {
         int i= 1;
         ident[0] = c;
-        while( isalnum( c = fgetc(ci) ) != 0 )
+        while( isalnum( c = fgetc(ci) ) != 0 || c == '_')
             ident[i++] = c;
         ident[i] = '\0';
 	ungetc(c, ci);
@@ -65,9 +65,9 @@ lexem_t alex_nextLexem( void ) {
          i \\ w napisie 
       */
         int cp = c;
-        while( (c= fgetc(ci)) != EOF && c != '"' && cp == '"' ) {
+        while( (c= fgetc(ci)) != EOF && c != '"' && cp == '\\' ) {
             //cp = c;
-       	    if( c == '\n' )
+       	    while( (c = fgetc(ci))  == '\n' )
         	ln++;
 	    }
         return c==EOF ? EOFILE : OTHER; 

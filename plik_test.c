@@ -17,6 +17,7 @@ int main()
 	printf("Wynik dodawania liczb calkowitych %d i %d: %d\n", l1, l2, funkcja1(l1, l2) );
 	printf("Wynik mnozenia liczb zmiennoprzecinkowych %f i %f: %f\n", l3, l4, funkcja2(l3, l4) );
 	funkcja1(1, 2);
+	printf("Wolno stojacy printf\n");
 	return 0;
 }
 
