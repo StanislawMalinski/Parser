@@ -1,6 +1,6 @@
 README.md
 
-Program "Parser" zadanie 8
+Program "Parser" (lmp 8)
 wykonany przez Stanisława Malińskiego oraz Weronikę Zbierowską.
 
 Instrukcja użytkowania:
