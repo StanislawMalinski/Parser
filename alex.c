@@ -13,11 +13,12 @@ int li = 32;
 char *keywords[MAX_IGN] = {"auto", "double", "int", "struct","break", "else", "long", "switch", "case", "enum", "register", "typedef", "char", "extern", "return", "union", "continue", "for", "signed", "void", "do", "if", "static", "while", "default", "goto", "sizeof", "volatile", "const", "float", "short", "unsigned"};
 
 void dod_key(char *word){
-    keywords[++li] = word;
+    keywords[li] = strdup(word);
     printf("Dodano %s\n", word);
     printf("%s w miejscu %d\n", keywords[li], li);
     if(li > MAX_IGN)
 	printf("Błąd uauauauaau\n");
+    li++;
 }
 
 void alex_init4file( FILE *in ) {
@@ -64,8 +65,8 @@ lexem_t alex_nextLexem( void ) {
          i \\ w napisie 
       */
         int cp = c;
-        while( (c= fgetc(ci)) != EOF && c != '"' && cp == '\\' ) {
-            cp = c;
+        while( (c= fgetc(ci)) != EOF && c != '"' && cp == '"' ) {
+            //cp = c;
        	    if( c == '\n' )
         	ln++;
 	    }

@@ -35,17 +35,19 @@ int main(int argc, char **argv){
 		return 2;
 	}
 	if (tryb == 2){
+		pocz++;
 		FILE *ignoruj = argc > 2 ? fopen(argv[2], "r") : NULL;
 		if (ignoruj == NULL){
 			fprintf(stderr, "%s: Nie praiwdłowy format wejściowy.\nNie podano plików wejściowych.\n", argv[0]);
 			help(argv[0]);
 			return 2;
 		}
-		while (fgets(buf, BUF, ignoruj) != NULL){
-			while (buf[strlen(buf)-1] == '\n')
-				buf[strlen(buf)-1] = 0;
+		while (fgets(buf, BUF, ignoruj) != NULL && *buf != '\n'){
+			if (buf[strlen(buf)-1] == '\n')
+				buf[strlen(buf)-1] = '\0';
 			dod_key(buf);
 		}
+		fclose(ignoruj);
 	}
 	if (argc < 3){
 		fprintf(stderr, "%s: Nie praiwdłowy format wejściowy.\nNie podano plików wejściowych.\n", argv[0]); 
